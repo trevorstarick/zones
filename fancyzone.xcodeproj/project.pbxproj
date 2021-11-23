@@ -7,19 +7,23 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		D6D5341F274A99F2000C0FC4 /* fancyzoneApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D5341E274A99F2000C0FC4 /* fancyzoneApp.swift */; };
-		D6D53421274A99F2000C0FC4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D53420274A99F2000C0FC4 /* ContentView.swift */; };
+		D6D5341F274A99F2000C0FC4 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D5341E274A99F2000C0FC4 /* App.swift */; };
 		D6D53423274A99F2000C0FC4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6D53422274A99F2000C0FC4 /* Assets.xcassets */; };
 		D6D53426274A99F2000C0FC4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6D53425274A99F2000C0FC4 /* Preview Assets.xcassets */; };
+		D6D5344C274C6CBD000C0FC4 /* AXSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D6D5344B274C6CBD000C0FC4 /* AXSwift */; };
+		D6D5344E274C7AA6000C0FC4 /* Zone.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D5344D274C7AA6000C0FC4 /* Zone.swift */; };
+		D6D53450274C9316000C0FC4 /* Handler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D5344F274C9316000C0FC4 /* Handler.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		D6D5341B274A99F2000C0FC4 /* fancyzone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = fancyzone.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		D6D5341E274A99F2000C0FC4 /* fancyzoneApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fancyzoneApp.swift; sourceTree = "<group>"; };
-		D6D53420274A99F2000C0FC4 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		D6D5341E274A99F2000C0FC4 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		D6D53422274A99F2000C0FC4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D6D53425274A99F2000C0FC4 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		D6D53427274A99F2000C0FC4 /* fancyzone.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = fancyzone.entitlements; sourceTree = "<group>"; };
+		D6D5344D274C7AA6000C0FC4 /* Zone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Zone.swift; sourceTree = "<group>"; };
+		D6D5344F274C9316000C0FC4 /* Handler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Handler.swift; sourceTree = "<group>"; };
+		D6D53468274D47FA000C0FC4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -27,6 +31,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D6D5344C274C6CBD000C0FC4 /* AXSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -52,11 +57,13 @@
 		D6D5341D274A99F2000C0FC4 /* fancyzone */ = {
 			isa = PBXGroup;
 			children = (
-				D6D5341E274A99F2000C0FC4 /* fancyzoneApp.swift */,
-				D6D53420274A99F2000C0FC4 /* ContentView.swift */,
+				D6D53468274D47FA000C0FC4 /* Info.plist */,
+				D6D5341E274A99F2000C0FC4 /* App.swift */,
 				D6D53422274A99F2000C0FC4 /* Assets.xcassets */,
 				D6D53427274A99F2000C0FC4 /* fancyzone.entitlements */,
 				D6D53424274A99F2000C0FC4 /* Preview Content */,
+				D6D5344D274C7AA6000C0FC4 /* Zone.swift */,
+				D6D5344F274C9316000C0FC4 /* Handler.swift */,
 			);
 			path = fancyzone;
 			sourceTree = "<group>";
@@ -85,6 +92,9 @@
 			dependencies = (
 			);
 			name = fancyzone;
+			packageProductDependencies = (
+				D6D5344B274C6CBD000C0FC4 /* AXSwift */,
+			);
 			productName = fancyzone;
 			productReference = D6D5341B274A99F2000C0FC4 /* fancyzone.app */;
 			productType = "com.apple.product-type.application";
@@ -113,6 +123,9 @@
 				Base,
 			);
 			mainGroup = D6D53412274A99F2000C0FC4;
+			packageReferences = (
+				D6D5344A274C6CBD000C0FC4 /* XCRemoteSwiftPackageReference "AXSwift" */,
+			);
 			productRefGroup = D6D5341C274A99F2000C0FC4 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -139,8 +152,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D6D53421274A99F2000C0FC4 /* ContentView.swift in Sources */,
-				D6D5341F274A99F2000C0FC4 /* fancyzoneApp.swift in Sources */,
+				D6D5341F274A99F2000C0FC4 /* App.swift in Sources */,
+				D6D53450274C9316000C0FC4 /* Handler.swift in Sources */,
+				D6D5344E274C7AA6000C0FC4 /* Zone.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -268,14 +282,17 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = fancyzone/fancyzone.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"fancyzone/Preview Content\"";
 				DEVELOPMENT_TEAM = 78QVX4PFXV;
-				ENABLE_HARDENED_RUNTIME = YES;
-				ENABLE_PREVIEWS = YES;
+				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_PREVIEWS = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = fancyzone/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -295,14 +312,17 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = fancyzone/fancyzone.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"fancyzone/Preview Content\"";
 				DEVELOPMENT_TEAM = 78QVX4PFXV;
-				ENABLE_HARDENED_RUNTIME = YES;
-				ENABLE_PREVIEWS = YES;
+				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_PREVIEWS = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = fancyzone/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -338,6 +358,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		D6D5344A274C6CBD000C0FC4 /* XCRemoteSwiftPackageReference "AXSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/tmandry/AXSwift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.3.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		D6D5344B274C6CBD000C0FC4 /* AXSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D6D5344A274C6CBD000C0FC4 /* XCRemoteSwiftPackageReference "AXSwift" */;
+			productName = AXSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = D6D53413274A99F2000C0FC4 /* Project object */;
 }
