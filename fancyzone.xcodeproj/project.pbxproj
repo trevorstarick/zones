@@ -13,6 +13,7 @@
 		D6D5344C274C6CBD000C0FC4 /* AXSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D6D5344B274C6CBD000C0FC4 /* AXSwift */; };
 		D6D5344E274C7AA6000C0FC4 /* Zone.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D5344D274C7AA6000C0FC4 /* Zone.swift */; };
 		D6D53450274C9316000C0FC4 /* Handler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D5344F274C9316000C0FC4 /* Handler.swift */; };
+		D6F436EE274F08B600CDADB5 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F436ED274F08B600CDADB5 /* Preferences.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		D6D5344D274C7AA6000C0FC4 /* Zone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Zone.swift; sourceTree = "<group>"; };
 		D6D5344F274C9316000C0FC4 /* Handler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Handler.swift; sourceTree = "<group>"; };
 		D6D53468274D47FA000C0FC4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		D6F436ED274F08B600CDADB5 /* Preferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,6 +66,7 @@
 				D6D53424274A99F2000C0FC4 /* Preview Content */,
 				D6D5344D274C7AA6000C0FC4 /* Zone.swift */,
 				D6D5344F274C9316000C0FC4 /* Handler.swift */,
+				D6F436ED274F08B600CDADB5 /* Preferences.swift */,
 			);
 			path = fancyzone;
 			sourceTree = "<group>";
@@ -154,6 +157,7 @@
 			files = (
 				D6D5341F274A99F2000C0FC4 /* App.swift in Sources */,
 				D6D53450274C9316000C0FC4 /* Handler.swift in Sources */,
+				D6F436EE274F08B600CDADB5 /* Preferences.swift in Sources */,
 				D6D5344E274C7AA6000C0FC4 /* Zone.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

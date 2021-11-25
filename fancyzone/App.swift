@@ -12,17 +12,23 @@ import AXSwift
 struct app: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
-    init() {}
-    
     var body: some Scene {
-        WindowGroup {
-            HStack {
-                Text("a")
-                Text("b")
-                Spacer()
-                Text("c")
-            }.padding()
+//        WindowGroup {
+//            ZStack {
+//              EmptyView()
+//            }.hidden()
+//        }
+        
+        WindowGroup("Preferences") { // other scene
+            Preferences()
+                .handlesExternalEvents(
+                    preferring: Set(arrayLiteral: "preferences"),
+                    allowing: Set(arrayLiteral: "*")
+            ) // activate existing window if exists
         }
+        .handlesExternalEvents(
+            matching: Set(arrayLiteral: "preferences")
+        ) // create new window if one doesn't exist
         
         Settings {
             EmptyView()
@@ -30,52 +36,59 @@ struct app: App {
     }
 }
 
-class AppDelegate: NSObject, NSApplicationDelegate {
-    var statusBarItem: NSStatusItem?
-    var application: NSApplication = NSApplication.shared
-    var showMenuButton: Bool = true
+struct PrimaryView: View {
+    
+    var body: some View {
+        ZStack {
+            EmptyView()
+        }.frame(maxWidth: .infinity, maxHeight: .infinity)
         
+    }
+}
+
+class AppDelegate: NSObject, NSApplicationDelegate {
+    var application: NSApplication = NSApplication.shared
+    var statusBarItem: NSStatusItem?
+    var showMenuButton: Bool = true
+    
+    @Environment(\.openURL) var openURL
+    @objc func showPreferences(_: Any?) {
+       if let url = URL(string: "fancyzones://preferences") {
+            openURL(url)
+       }
+    }
+    
     func applicationDidFinishLaunching(_ notification: Notification) {
         backgroundService()
-        
+        menuService()
+    }
+    
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        return false
+    }
+    
+    func menuService() {        
         let menu  = NSMenu()
-        let menuItem = NSMenuItem()
         
-        let view = NSHostingView(rootView: ContentView())
-        view.frame = NSRect(x: 0, y: 0, width: 100, height: 100)
+        let preferences = NSMenuItem(title: "Preferences", action: #selector(showPreferences), keyEquivalent: ",")
+        menu.addItem(preferences)
         
-        menuItem.view = view
-        menu.addItem(menuItem)
-
+        let aboutCleverZones = NSMenuItem(title: "About CleverZones", action: #selector(NSApplication.shared.showHelp), keyEquivalent: "")
+        menu.addItem(aboutCleverZones)
+        
+        menu.addItem(.separator())
+        
+        let quitCleverZones = NSMenuItem(title: "Quit", action: #selector(NSApplication.shared.terminate), keyEquivalent: "q")
+        menu.addItem(quitCleverZones)
+        
         if showMenuButton {
             statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-            statusBarItem?.button?.title = "fz"
+            statusBarItem?.button?.title = "💩"
             statusBarItem?.menu = menu
         }
     }
-}
 
-struct ContentView: View {
-    var body: some View {
-        VStack(alignment: .leading) {
-            Text("CleverZones")
-                .bold()
-            Divider()
-            Text("A")
-            Text("B")
-            Text("C")
-            Divider()
-            Text("Quit CleverZones")
-        }.padding()
-    }
 }
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
-}
-
 
 func backgroundService() {
     guard UIElement.isProcessTrusted(withPrompt: true) else {

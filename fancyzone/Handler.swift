@@ -9,14 +9,6 @@ import Foundation
 import AXSwift
 import SwiftUI
 
-enum cols {
-    case Smart
-    case One
-    case Two
-    case Three
-    case Four
-}
-
 class Handler {
     private var currentWindow: UIElement?
     private var selectedZone: Zone?
@@ -30,9 +22,6 @@ class Handler {
         let screen = NSScreen.main!.frame
         let padding = 16.0
         let menuBarHeight = (NSApplication.shared.mainMenu?.menuBarHeight)!
-        
-        // todo: generate merged zones and make the largest ones at the bottom of the zone array
-        // todo: order and break on zone matching
         
         let targetWidth = (screen.width - padding) / CGFloat(targetColumns)
         let targetHeight = screen.height - menuBarHeight - padding
@@ -50,8 +39,13 @@ class Handler {
             self.Zones.append(z)
         }
         
+        // todo: generate merged zones and make the largest ones at the bottom of the zone array
+        // todo: order and break on zone matching
+        // todo: generate zones based on a percentage or something
+        // todo: zones be display specific
+        
+        // generate solo zones
         self.Zones.forEach{ zone in
-            print(zone.Size, zone.Position)
             self.Zones = [
                 Zone(CGSize(width: 1260.0, height: 1384.0), CGPoint(x: 16.0, y: 40.0)),
                 Zone(CGSize(width: 1260.0, height: 1384.0), CGPoint(x: 1292.0, y: 40.0)),
@@ -62,6 +56,7 @@ class Handler {
             ]
         }
         
+        // generate overlap zones
         for i in 0...Zones.count - 2 {
             let zoneA = Zones[i]
             let zoneB = Zones[i+1]
@@ -92,6 +87,8 @@ class Handler {
                 self.selectedZone = nil
             }
         }
+        
+        // todo: display zones here
         
         // suggest a zone
         for i in 0...self.Zones.count - 1 {
