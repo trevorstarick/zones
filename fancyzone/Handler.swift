@@ -75,8 +75,15 @@ class Handler {
         let app = NSWorkspace.shared.frontmostApplication!
         let uiApp = Application(app)!
         
-        guard let window = try! uiApp.windows()!.first else { return }
-        self.currentWindow = window
+        let windows = try! uiApp.windows()!
+        windows.forEach { w in
+            let attrFocused: Bool? = try! w.attribute(.focused)
+            let attrMain: Bool? = try! w.attribute(.main)
+            
+            if attrFocused ?? false || attrMain ?? false {
+                self.currentWindow = w
+            }
+        }
         
         if self.selectedZone != nil {
             if self.selectedZone!.Composite {
