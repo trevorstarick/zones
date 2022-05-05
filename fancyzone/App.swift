@@ -8,33 +8,20 @@
 import SwiftUI
 import AXSwift
 
+public var handler = Handler()
+
 @main
 struct app: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
     var body: some Scene {
-//        WindowGroup {
-//            ZStack {
-//              EmptyView()
-//            }.hidden()
-//        }
-        
-        WindowGroup("Preferences") { // other scene
-            Preferences()
-                .handlesExternalEvents(
-                    preferring: Set(arrayLiteral: "preferences"),
-                    allowing: Set(arrayLiteral: "*")
-            ) // activate existing window if exists
-        }
-        .handlesExternalEvents(
-            matching: Set(arrayLiteral: "preferences")
-        ) // create new window if one doesn't exist
-        
         Settings {
             EmptyView()
         }
     }
 }
+
+
 
 struct PrimaryView: View {
     
@@ -87,7 +74,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             statusBarItem?.menu = menu
         }
     }
-
 }
 
 func backgroundService() {
@@ -99,7 +85,6 @@ func backgroundService() {
     }
     
     var leftDown = false
-    let handler = Handler()
     handler.GenerateZones(4)
     
     NSEvent.addGlobalMonitorForEvents(matching: .leftMouseDown, handler: { event in
@@ -134,7 +119,6 @@ func backgroundService() {
         
         if handler.Active {
             handler.Submit()
-        } else {
             handler.Cancel()
         }
     })

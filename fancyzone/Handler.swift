@@ -9,14 +9,36 @@ import Foundation
 import AXSwift
 import SwiftUI
 
-class Handler {
+public class Handler {
     private var currentWindow: UIElement?
     private var selectedZone: Zone?
+    private var window: NSWindow!
     
-    var Zones = [Zone]()
-    var Active: Bool = false
+    public var Zones = [Zone]()
+    public var Active: Bool = false
     
-    func GenerateZones(_ targetColumns: Int) {
+    init() {}
+    
+    private func createWindow() {
+        self.window = NSWindow(
+            contentRect: NSRect(origin: CGPoint(x: 0, y: 0), size: (NSScreen.main?.frame.size)!),
+                styleMask: [],
+                backing: .buffered, defer: false)
+        self.window.center()
+        
+        self.window.isReleasedWhenClosed = false
+        self.window.canHide = true
+        
+        self.window?.contentView = NSHostingView(rootView: SwiftUIView())
+
+        self.window?.styleMask.remove(.titled)
+        self.window?.isMovableByWindowBackground = true
+        
+        self.window?.titlebarAppearsTransparent = true
+        self.window?.backgroundColor = NSColor(cgColor: CGColor(red: 0, green: 0, blue: 0, alpha: 0))
+    }
+
+    public func GenerateZones(_ targetColumns: Int) {
         self.Zones = [Zone]()
         
         let screen = NSScreen.main!.frame
@@ -68,9 +90,13 @@ class Handler {
         }
     }
     
-    
-    func Handle(_ cursorPosition: CGPoint) {
-        self.Active = true
+    public func Handle(_ cursorPosition: CGPoint) {
+        if self.Active == false {
+            self.Active = true
+            self.createWindow()
+            self.window.makeKeyAndOrderFront(nil)
+            self.window.orderFrontRegardless()
+        }
         
         let app = NSWorkspace.shared.frontmostApplication!
         let uiApp = Application(app)!
@@ -112,20 +138,21 @@ class Handler {
 
     }
     
-    func Cancel() {
+    public func Submit() {
+        guard let w = self.currentWindow else { return }
+        guard let z = self.selectedZone else {return }
+        
+        try! w.setAttribute(.position, value: z.Position)
+        try? w.setAttribute(.size, value: z.Size)
+    }
+    
+    public func Cancel() {
+        print("a")
+//        self.window.orderOut(self)
+        self.window.close()
+        
         self.Active = false
         self.currentWindow = nil
         self.selectedZone = nil
     }
-    
-    func Submit() {
-        guard let window = self.currentWindow else { return Cancel() }
-        guard let zone = self.selectedZone else {return Cancel() }
-        
-        try! window.setAttribute(.position, value: zone.Position)
-        try? window.setAttribute(.size, value: zone.Size)
-        
-        Cancel()
-    }
-
 }

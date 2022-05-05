@@ -6,12 +6,27 @@
 //
 
 import Foundation
+import SwiftUI
 
-class Zone {
-    var Size: CGSize
-    var Position: CGPoint
+public class Zone: Identifiable, Hashable {
+    public static func == (lhs: Zone, rhs: Zone) -> Bool {
+        return (lhs.id == rhs.id)
+    }
     
-    var Composite: Bool
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+    
+    public var id = UUID()
+    
+    public var Size: CGSize
+    public var Position: CGPoint
+    
+    public var Composite: Bool
+    
+    convenience init(_ rect: CGRect) {
+        self.init(rect.size, rect.origin, false)
+    }
     
     init(_ size: CGSize, _ position: CGPoint, _ composite: Bool = false) {
         Size = size
@@ -19,13 +34,7 @@ class Zone {
         Composite = composite
     }
     
-    init(_ rect: CGRect) {
-        Size = rect.size
-        Position = rect.origin
-        Composite = false
-    }
-    
-    func Within(_ position: CGPoint) -> Bool {
+    public func Within(_ position: CGPoint) -> Bool {
         return (
             self.Position.x <= position.x
             && position.x <= self.Position.x + self.Size.width
@@ -33,6 +42,4 @@ class Zone {
             && position.y <= self.Position.y + self.Size.height
         )
     }
-    
-    func Display() {}
 }
