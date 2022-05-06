@@ -10,6 +10,9 @@ import AXSwift
 
 public var handler = Handler()
 
+var leftDown = false
+var toggled = false
+
 @main
 struct app: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
@@ -109,6 +112,23 @@ func windowNumberToPosition(windowNumber: Int) -> Coords {
     return Coords(-1, -1)
 }
 
+func activate(_ event: NSEvent) {
+    toggled = true
+    let coord = CGPoint(
+        x: event.locationInWindow.x,
+        y: NSScreen.main!.frame.height - event.locationInWindow.y
+    )
+    handler.Handle(coord)
+}
+
+func cancel() {
+    toggled = false
+    
+    if handler.Active {
+        handler.Cancel()
+    }
+}
+
 func backgroundService() {
     guard UIElement.isProcessTrusted(withPrompt: true) else {
         NSLog("No accessibility API permission, exiting")
@@ -117,8 +137,17 @@ func backgroundService() {
         return
     }
     
-    var leftDown = false
     handler.GenerateZones(4)
+    handler.SplitZone(-1)
+    
+    var activeEvent: NSEvent?
+    
+    _ = Timer.scheduledTimer(withTimeInterval: 1.0/60.0, repeats: true) { timer in
+        if activeEvent != nil {
+            activate(activeEvent!)
+            activeEvent = nil
+        }
+    }
     
     NSEvent.addGlobalMonitorForEvents(matching: .leftMouseDown, handler: { event in
         let coords = windowNumberToPosition(windowNumber: event.windowNumber)
@@ -130,33 +159,43 @@ func backgroundService() {
     
     // check if the position has changed
     NSEvent.addGlobalMonitorForEvents(matching: .leftMouseDragged, handler: { event in
-        if handler.Active || (leftDown && event.modifierFlags.contains(.command)) {
-            let coord = CGPoint(
-                x: event.locationInWindow.x,
-                y: NSScreen.main!.frame.height - event.locationInWindow.y
-            )
-            handler.Handle(coord)
+        if (leftDown && event.modifierFlags.contains(.command)) {
+            if toggled {
+                cancel()
+                return
+            }
+            
+            activate(event)
+        }
+        
+        if handler.Active {
+            activeEvent = event
         }
     })
     
     // if left is still down, and the pos has changed, we're golden; pony boy
     NSEvent.addGlobalMonitorForEvents(matching: .rightMouseDown, handler: { event in
         if leftDown {
-            let coord = CGPoint(
-                x: event.locationInWindow.x,
-                y: NSScreen.main!.frame.height - event.locationInWindow.y
-            )
-            handler.Handle(coord)
+            if toggled {
+                cancel()
+                return
+            }
+
+            activeEvent = event
         }
     })
     
     // done
     NSEvent.addGlobalMonitorForEvents(matching: .leftMouseUp, handler: { event in
-        leftDown = false
-        
-        if handler.Active {
-            handler.Submit()
-            handler.Cancel()
+        if leftDown {
+            leftDown = false
+            toggled = false
+            activeEvent = nil
+            
+            if handler.Active {
+                handler.Submit()
+                handler.Cancel()
+            }
         }
     })
     

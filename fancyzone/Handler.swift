@@ -51,7 +51,7 @@ public class Handler {
         }
     }
     
-    func splitZone(_ index: Int, splitType: String = "verticle") {
+    public func SplitZone(_ index: Int, splitType: String = "verticle") {
         var zoneIndex = index
         if index < 0 {
             zoneIndex = self.StandaloneZones.zones.count + index
@@ -90,9 +90,6 @@ public class Handler {
             let z = Zone(smartSize, pos)
             self.StandaloneZones.zones.append(z)
         }
-        
-//        splitZone(-2)
-        splitZone(-1)
     }
     
     public func Handle(_ cursorPosition: CGPoint) {
