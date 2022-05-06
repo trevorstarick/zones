@@ -8,7 +8,11 @@
 import Foundation
 import SwiftUI
 
-public class Zone: Identifiable, Hashable {
+public class Zones: ObservableObject {
+    @Published public var zones = [Zone]()
+}
+
+public struct Zone: Identifiable, Hashable {
     public static func == (lhs: Zone, rhs: Zone) -> Bool {
         return (lhs.id == rhs.id)
     }
@@ -22,16 +26,16 @@ public class Zone: Identifiable, Hashable {
     public var Size: CGSize
     public var Position: CGPoint
     
-    public var Composite: Bool
+    public var Hovered: Bool
     
-    convenience init(_ rect: CGRect) {
-        self.init(rect.size, rect.origin, false)
+    init(_ rect: CGRect) {
+        self.init(rect.size, rect.origin)
     }
     
-    init(_ size: CGSize, _ position: CGPoint, _ composite: Bool = false) {
+    init(_ size: CGSize, _ position: CGPoint) {
         Size = size
         Position = position
-        Composite = composite
+        Hovered = false
     }
     
     public func Within(_ position: CGPoint) -> Bool {

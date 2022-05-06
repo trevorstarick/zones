@@ -11,11 +11,14 @@ import SwiftUI
 
 public class Handler {
     private var currentWindow: UIElement?
-    private var selectedZone: Zone?
     private var window: NSWindow!
+    private var selectedZones = [Zone]()
     
-    public var Zones = [Zone]()
+    public var StandaloneZones = Zones()
     public var Active: Bool = false
+   
+    
+    private let padding = 16.0
     
     init() {}
     
@@ -29,7 +32,7 @@ public class Handler {
         self.window.isReleasedWhenClosed = false
         self.window.canHide = true
         
-        self.window?.contentView = NSHostingView(rootView: SwiftUIView())
+        self.window?.contentView = NSHostingView(rootView: SwiftUIView(zones: StandaloneZones))
 
         self.window?.styleMask.remove(.titled)
         self.window?.isMovableByWindowBackground = true
@@ -37,12 +40,39 @@ public class Handler {
         self.window?.titlebarAppearsTransparent = true
         self.window?.backgroundColor = NSColor(cgColor: CGColor(red: 0, green: 0, blue: 0, alpha: 0))
     }
+    
+    func checkForHit(point: CGPoint) {
+        for i in 0...self.StandaloneZones.zones.count - 1 {
+            if self.StandaloneZones.zones[i].Within(point) {
+                self.selectedZones.append(self.StandaloneZones.zones[i])
+                self.StandaloneZones.zones[i].Hovered = true
+                return
+            }
+        }
+    }
+    
+    func splitZone(_ index: Int, splitType: String = "verticle") {
+        var zoneIndex = index
+        if index < 0 {
+            zoneIndex = self.StandaloneZones.zones.count + index
+        }
+        
+        if (splitType == "verticle") {
+            self.StandaloneZones.zones[zoneIndex].Size.height -= padding
+            self.StandaloneZones.zones[zoneIndex].Size.height /= 2
+            
+            var dupe = Zone(self.StandaloneZones.zones[zoneIndex].Size, self.StandaloneZones.zones[zoneIndex].Position)
+            dupe.Position.y += dupe.Size.height + padding
+            self.StandaloneZones.zones.insert(dupe, at: zoneIndex)
+        } else if splitType == "horizontal" {
+            
+        }
+    }
 
     public func GenerateZones(_ targetColumns: Int) {
-        self.Zones = [Zone]()
+        self.StandaloneZones = Zones()
         
         let screen = NSScreen.main!.frame
-        let padding = 16.0
         let menuBarHeight = (NSApplication.shared.mainMenu?.menuBarHeight)!
         
         let targetWidth = (screen.width - padding) / CGFloat(targetColumns)
@@ -58,36 +88,11 @@ public class Handler {
                 y: menuBarHeight + padding
             )
             let z = Zone(smartSize, pos)
-            self.Zones.append(z)
+            self.StandaloneZones.zones.append(z)
         }
         
-        // todo: generate merged zones and make the largest ones at the bottom of the zone array
-        // todo: order and break on zone matching
-        // todo: generate zones based on a percentage or something
-        // todo: zones be display specific
-        
-        // generate solo zones
-        self.Zones.forEach{ zone in
-            self.Zones = [
-                Zone(CGSize(width: 1260.0, height: 1384.0), CGPoint(x: 16.0, y: 40.0)),
-                Zone(CGSize(width: 1260.0, height: 1384.0), CGPoint(x: 1292.0, y: 40.0)),
-                Zone(CGSize(width: 1260.0, height: 1384.0), CGPoint(x: 2568.0, y: 40.0)),
-                
-                Zone(CGSize(width: 1260.0, height: 684.0), CGPoint(x: 3844.0, y: 40.0)),
-                Zone(CGSize(width: 1260.0, height: 684.0), CGPoint(x: 3844.0, y: 740.0))
-            ]
-        }
-        
-        // generate overlap zones
-        for i in 0...Zones.count - 2 {
-            let zoneA = Zones[i]
-            let zoneB = Zones[i+1]
-            
-            let width = zoneB.Position.x + zoneB.Size.width - zoneA.Position.x
-            let height = max(zoneA.Size.height, zoneB.Size.height)
-            let size = CGSize(width: width, height: height)
-            self.Zones.append(Zone(size, self.Zones[i].Position, true))
-        }
+//        splitZone(-2)
+        splitZone(-1)
     }
     
     public func Handle(_ cursorPosition: CGPoint) {
@@ -111,48 +116,58 @@ public class Handler {
             }
         }
         
-        if self.selectedZone != nil {
-            if self.selectedZone!.Composite {
-                self.selectedZone = nil
-            } else if self.selectedZone!.Within(cursorPosition) {
-                return
-            } else {
-                self.selectedZone = nil
-            }
+        // reset hovered state
+        for i in 0...self.StandaloneZones.zones.count - 1 {
+            self.StandaloneZones.zones[i].Hovered = false
         }
         
-        // todo: display zones here
+        self.selectedZones = [Zone]()
         
         // suggest a zone
-        for i in 0...self.Zones.count - 1 {
-            let zone = self.Zones[i]
-            if zone.Within(cursorPosition) {
-                self.selectedZone = zone
-                break
-            }
-        }
+        checkForHit(point: cursorPosition)
         
-        if self.selectedZone == nil {
-            // todo: calculate if something should be in between two zones
+        if self.selectedZones.count == 0 {
+            checkForHit(point: CGPoint(x: cursorPosition.x - padding, y: cursorPosition.y - padding))
+            checkForHit(point: CGPoint(x: cursorPosition.x, y: cursorPosition.y - padding))
+            checkForHit(point: CGPoint(x: cursorPosition.x + padding, y: cursorPosition.y - padding))
+            
+            checkForHit(point: CGPoint(x: cursorPosition.x - padding, y: cursorPosition.y))
+//            checkForHit(point: CGPoint(x: cursorPosition.x, y: cursorPosition.y))
+            checkForHit(point: CGPoint(x: cursorPosition.x + padding, y: cursorPosition.y))
+            
+            checkForHit(point: CGPoint(x: cursorPosition.x - padding, y: cursorPosition.y + padding))
+            checkForHit(point: CGPoint(x: cursorPosition.x, y: cursorPosition.y + padding))
+            checkForHit(point: CGPoint(x: cursorPosition.x + padding, y: cursorPosition.y + padding))
         }
 
     }
     
     public func Submit() {
         guard let w = self.currentWindow else { return }
-        guard let z = self.selectedZone else {return }
         
-        try! w.setAttribute(.position, value: z.Position)
-        try? w.setAttribute(.size, value: z.Size)
+        if self.selectedZones.count == 1 {
+            try! w.setAttribute(.position, value: self.selectedZones[0].Position)
+            try? w.setAttribute(.size, value: self.selectedZones[0].Size)
+        }
+        
+        let zone = self.selectedZones[0]
+        var r = CGRect(origin: zone.Position, size: zone.Size)
+        
+        for i in 0...self.selectedZones.count - 1 {
+            let zone = self.selectedZones[i]
+            r = r.union(CGRect(origin: zone.Position, size: zone.Size))
+        }
+        
+        try! w.setAttribute(.position, value: r.origin)
+        try? w.setAttribute(.size, value: r.size)
     }
     
     public func Cancel() {
-        print("a")
 //        self.window.orderOut(self)
         self.window.close()
         
         self.Active = false
         self.currentWindow = nil
-        self.selectedZone = nil
+        self.selectedZones = [Zone]()
     }
 }

@@ -9,26 +9,20 @@
 import SwiftUI
 
 struct SwiftUIView: View {
+    @ObservedObject var zones: Zones
+
     let bounds = NSScreen.main?.frame
     var body: some View {
         ZStack{
-        ForEach(handler.Zones) { zone in
-            if !zone.Composite {
+            ForEach($zones.zones, id: \.self) { $zone in
                 ZStack {
                     RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .fill(Color.black.opacity(0.25))
+                        .fill(Color.blue.opacity(zone.Hovered ? 0.2 : 0.1))
                     RoundedRectangle(cornerRadius: 12, style: .continuous)
                         .stroke(Color.blue, lineWidth: 2)
                 }.frame(width: zone.Size.width, height: zone.Size.height)
                     .position(x: zone.Position.x + zone.Size.width / 2, y: zone.Position.y - 26 + zone.Size.height / 2)
             }
         }
-        }
-    }
-}
-
-struct SwiftUIView_Previews: PreviewProvider {
-    static var previews: some View {
-        SwiftUIView()
     }
 }
