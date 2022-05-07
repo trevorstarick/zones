@@ -89,27 +89,27 @@ struct Coords {
     }
 }
 
-func windowNumberToPosition(windowNumber: Int) -> Coords {
-    // With this procedure, we get all available windows.
+func windowNumberToPosition(windowNumber: Int) -> CGRect {
     let options = CGWindowListOption(arrayLiteral: CGWindowListOption.excludeDesktopElements, CGWindowListOption.optionOnScreenOnly)
     let windowListInfo = CGWindowListCopyWindowInfo(options, CGWindowID(0))
     let windowInfoList = windowListInfo as NSArray? as? [[String: AnyObject]]
-
-    // Now that we have all available windows, we are going to check if at least one of them
-    // is owned by Safari.
+    
     for info in windowInfoList! {
         if (windowNumber == info["kCGWindowNumber"] as! Int) {
             if (info["kCGWindowBounds"] != nil) {
                 let x = (info["kCGWindowBounds"] as! NSDictionary)["X"] as! Int
                 let y = (info["kCGWindowBounds"] as! NSDictionary)["Y"] as! Int
-                return Coords(x, y)
+                let width = (info["kCGWindowBounds"] as! NSDictionary)["Width"] as! Int
+                let height = (info["kCGWindowBounds"] as! NSDictionary)["Height"] as! Int
+                
+                return CGRect(x: x, y: y, width: width, height: height)
             }
             
-            return Coords(-1, -1)
+            return CGRect()
         }
     }
     
-    return Coords(-1, -1)
+    return CGRect()
 }
 
 func activate(_ event: NSEvent) {
@@ -137,39 +137,51 @@ func backgroundService() {
         return
     }
     
-    handler.GenerateZones(4)
+    handler.AutoGenerateZones()
+//    handler.GenerateZones(4)
     handler.SplitZone(-1)
     
-    var activeEvent: NSEvent?
+    var hoverEvent: NSEvent?
+    var commandDown: Bool = false
     
-    _ = Timer.scheduledTimer(withTimeInterval: 1.0/60.0, repeats: true) { timer in
-        if activeEvent != nil {
-            activate(activeEvent!)
-            activeEvent = nil
+    // timer that updates the current position (hover)
+    _ = Timer.scheduledTimer(withTimeInterval: 1.0/20.0, repeats: true) { timer in
+        if hoverEvent != nil {
+            activate(hoverEvent!)
+            hoverEvent = nil
         }
     }
     
     NSEvent.addGlobalMonitorForEvents(matching: .leftMouseDown, handler: { event in
         let coords = windowNumberToPosition(windowNumber: event.windowNumber)
-        if (Int(event.cgEvent!.location.y) < coords.Y + 38) {
+        
+        if coords.minY > 0 && coords.contains(event.cgEvent!.location) && CGFloat(event.cgEvent!.location.y) < coords.minY + 38 {
             leftDown = true
         }
         
     })
     
+    NSEvent.addGlobalMonitorForEvents(matching: .flagsChanged, handler: { event in
+        
+        if (event.keyCode == 55) {
+            if event.modifierFlags.contains(.command) {
+                // key down
+                if toggled {
+                    cancel()
+                    return
+                } else if leftDown {
+                    activate(event)
+                }
+            } else {
+                // key up
+            }
+        }
+    })
+    
     // check if the position has changed
     NSEvent.addGlobalMonitorForEvents(matching: .leftMouseDragged, handler: { event in
-        if (leftDown && event.modifierFlags.contains(.command)) {
-            if toggled {
-                cancel()
-                return
-            }
-            
-            activate(event)
-        }
-        
-        if handler.Active {
-            activeEvent = event
+        if handler.Active && hoverEvent == nil {
+            hoverEvent = event
         }
     })
     
@@ -181,7 +193,7 @@ func backgroundService() {
                 return
             }
 
-            activeEvent = event
+            activate(event)
         }
     })
     
@@ -190,7 +202,7 @@ func backgroundService() {
         if leftDown {
             leftDown = false
             toggled = false
-            activeEvent = nil
+            hoverEvent = nil
             
             if handler.Active {
                 handler.Submit()

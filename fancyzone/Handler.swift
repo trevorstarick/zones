@@ -92,6 +92,13 @@ public class Handler {
         }
     }
     
+    public func AutoGenerateZones() {
+        let screen = NSScreen.main!.frame
+        let columns = Int(ceil(screen.width / 1280))
+    
+        self.GenerateZones(columns)
+    }
+    
     public func Handle(_ cursorPosition: CGPoint) {
         if self.Active == false {
             self.Active = true
@@ -141,6 +148,10 @@ public class Handler {
     
     public func Submit() {
         guard let w = self.currentWindow else { return }
+        
+        if self.selectedZones.count == 0 {
+            return
+        }
         
         if self.selectedZones.count == 1 {
             try! w.setAttribute(.position, value: self.selectedZones[0].Position)
