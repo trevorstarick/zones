@@ -162,8 +162,7 @@ func backgroundService() {
     })
     
     NSEvent.addGlobalMonitorForEvents(matching: .flagsChanged, handler: { event in
-        
-        if (event.keyCode == 55) {
+        if (event.keyCode == 54 || event.keyCode == 55) {
             if event.modifierFlags.contains(.command) {
                 // key down
                 if toggled {

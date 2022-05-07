@@ -17,17 +17,19 @@ public class Handler {
     public var StandaloneZones = Zones()
     public var Active: Bool = false
    
-    
-    private let padding = 16.0
+    private let outerGaps: CGFloat = 4
+    private let innerGaps: CGFloat = 8
+    private let onTop: Bool = true
     
     init() {}
     
     private func createWindow() {
+        let size = (NSScreen.main?.frame.size)!
+        
         self.window = NSWindow(
-            contentRect: NSRect(origin: CGPoint(x: 0, y: 0), size: (NSScreen.main?.frame.size)!),
+            contentRect: NSRect(origin: CGPoint(x: 0, y: 0), size: size),
                 styleMask: [],
-                backing: .buffered, defer: false)
-        self.window.center()
+            backing: .buffered, defer: false)
         
         self.window.isReleasedWhenClosed = false
         self.window.canHide = true
@@ -35,7 +37,7 @@ public class Handler {
         self.window?.contentView = NSHostingView(rootView: SwiftUIView(zones: StandaloneZones))
 
         self.window?.styleMask.remove(.titled)
-        self.window?.isMovableByWindowBackground = true
+        self.window?.isMovableByWindowBackground = false
         
         self.window?.titlebarAppearsTransparent = true
         self.window?.backgroundColor = NSColor(cgColor: CGColor(red: 0, green: 0, blue: 0, alpha: 0))
@@ -58,11 +60,11 @@ public class Handler {
         }
         
         if (splitType == "verticle") {
-            self.StandaloneZones.zones[zoneIndex].Size.height -= padding
+            self.StandaloneZones.zones[zoneIndex].Size.height -= innerGaps
             self.StandaloneZones.zones[zoneIndex].Size.height /= 2
             
             var dupe = Zone(self.StandaloneZones.zones[zoneIndex].Size, self.StandaloneZones.zones[zoneIndex].Position)
-            dupe.Position.y += dupe.Size.height + padding
+            dupe.Position.y += dupe.Size.height + innerGaps
             self.StandaloneZones.zones.insert(dupe, at: zoneIndex)
         } else if splitType == "horizontal" {
             
@@ -75,20 +77,36 @@ public class Handler {
         let screen = NSScreen.main!.frame
         let menuBarHeight = (NSApplication.shared.mainMenu?.menuBarHeight)!
         
-        let targetWidth = (screen.width - padding) / CGFloat(targetColumns)
-        let targetHeight = screen.height - menuBarHeight - padding
+        var width = screen.width
+        width -= outerGaps * 2
+        width += innerGaps
+        
+        var height = screen.height
+        height -= menuBarHeight
+        height -= outerGaps * 2
+        height += innerGaps
+        
+        var targetWidth = width
+        targetWidth /= CGFloat(targetColumns)
+        targetWidth -= innerGaps
+        
+        var targetHeight = height
+        targetHeight -= innerGaps
+        
         let smartSize = CGSize(
-            width: targetWidth - padding,
-            height: targetHeight - padding
+            width: targetWidth,
+            height: targetHeight
         )
         
-        for i in 0...targetColumns - 1 {
-            let pos = CGPoint(
-                x: CGFloat(i) * targetWidth + padding,
-                y: menuBarHeight + padding
-            )
+        var pos = CGPoint(
+            x: outerGaps,
+            y: menuBarHeight + outerGaps
+        )
+        
+        for _ in 0...targetColumns - 1 {
             let z = Zone(smartSize, pos)
             self.StandaloneZones.zones.append(z)
+            pos.x += smartSize.width + innerGaps
         }
     }
     
@@ -104,21 +122,25 @@ public class Handler {
             self.Active = true
             self.createWindow()
             self.window.makeKeyAndOrderFront(nil)
-            self.window.orderFrontRegardless()
-        }
-        
-        let app = NSWorkspace.shared.frontmostApplication!
-        let uiApp = Application(app)!
-        
-        let windows = try! uiApp.windows()!
-        windows.forEach { w in
-            let attrFocused: Bool? = try! w.attribute(.focused)
-            let attrMain: Bool? = try! w.attribute(.main)
+            if onTop {
+                self.window.orderFrontRegardless()
+            }
             
-            if attrFocused ?? false || attrMain ?? false {
-                self.currentWindow = w
+            let app = NSWorkspace.shared.frontmostApplication!
+            let uiApp = Application(app)!
+            
+            let windows = try! uiApp.windows()!
+            windows.forEach { w in
+                let attrFocused: Bool? = try! w.attribute(.focused)
+                let attrMain: Bool? = try! w.attribute(.main)
+                
+                if attrFocused ?? false || attrMain ?? false {
+                    self.currentWindow = w
+                }
             }
         }
+        
+       
         
         // reset hovered state
         for i in 0...self.StandaloneZones.zones.count - 1 {
@@ -131,17 +153,17 @@ public class Handler {
         checkForHit(point: cursorPosition)
         
         if self.selectedZones.count == 0 {
-            checkForHit(point: CGPoint(x: cursorPosition.x - padding, y: cursorPosition.y - padding))
-            checkForHit(point: CGPoint(x: cursorPosition.x, y: cursorPosition.y - padding))
-            checkForHit(point: CGPoint(x: cursorPosition.x + padding, y: cursorPosition.y - padding))
+            checkForHit(point: CGPoint(x: cursorPosition.x - innerGaps, y: cursorPosition.y - innerGaps))
+            checkForHit(point: CGPoint(x: cursorPosition.x, y: cursorPosition.y - innerGaps))
+            checkForHit(point: CGPoint(x: cursorPosition.x + innerGaps, y: cursorPosition.y - innerGaps))
             
-            checkForHit(point: CGPoint(x: cursorPosition.x - padding, y: cursorPosition.y))
+            checkForHit(point: CGPoint(x: cursorPosition.x - innerGaps, y: cursorPosition.y))
 //            checkForHit(point: CGPoint(x: cursorPosition.x, y: cursorPosition.y))
-            checkForHit(point: CGPoint(x: cursorPosition.x + padding, y: cursorPosition.y))
+            checkForHit(point: CGPoint(x: cursorPosition.x + innerGaps, y: cursorPosition.y))
             
-            checkForHit(point: CGPoint(x: cursorPosition.x - padding, y: cursorPosition.y + padding))
-            checkForHit(point: CGPoint(x: cursorPosition.x, y: cursorPosition.y + padding))
-            checkForHit(point: CGPoint(x: cursorPosition.x + padding, y: cursorPosition.y + padding))
+            checkForHit(point: CGPoint(x: cursorPosition.x - innerGaps, y: cursorPosition.y + innerGaps))
+            checkForHit(point: CGPoint(x: cursorPosition.x, y: cursorPosition.y + innerGaps))
+            checkForHit(point: CGPoint(x: cursorPosition.x + innerGaps, y: cursorPosition.y + innerGaps))
         }
 
     }

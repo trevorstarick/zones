@@ -21,7 +21,7 @@ struct SwiftUIView: View {
                     RoundedRectangle(cornerRadius: 12, style: .continuous)
                         .stroke(Color.blue, lineWidth: 2)
                 }.frame(width: zone.Size.width, height: zone.Size.height)
-                    .position(x: zone.Position.x + zone.Size.width / 2, y: zone.Position.y - 26 + zone.Size.height / 2)
+                    .position(x: zone.Position.x + zone.Size.width / 2, y: zone.Position.y + zone.Size.height / 2)
             }
         }
     }
