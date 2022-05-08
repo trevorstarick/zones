@@ -49,6 +49,23 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func applicationDidFinishLaunching(_ notification: Notification) {
+        guard UIElement.isProcessTrusted(withPrompt: true) else {
+            NSLog("No accessibility API permission, exiting")
+            usleep(10000)
+            NSRunningApplication.current.terminate()
+            return
+        }
+
+        genZones()
+        
+        NotificationCenter.default.addObserver(
+            forName: NSApplication.didChangeScreenParametersNotification,
+            object: NSApplication.shared,
+            queue: OperationQueue.main) {
+                notification -> Void in
+                genZones()
+        }
+        
         backgroundService()
         menuService()
     }
@@ -129,18 +146,15 @@ func cancel() {
     }
 }
 
-func backgroundService() {
-    guard UIElement.isProcessTrusted(withPrompt: true) else {
-        NSLog("No accessibility API permission, exiting")
-        usleep(10000)
-        NSRunningApplication.current.terminate()
-        return
-    }
-    
+func genZones() {
     handler.AutoGenerateZones()
-//    handler.GenerateZones(4)
-    handler.SplitZone(-1)
-    
+//    handler.GenerateZones(4) // 4 columns
+    if handler.StandaloneZones.zones.count > 1 {
+        handler.SplitZone(-1)
+    }
+}
+
+func backgroundService() {
     var hoverEvent: NSEvent?
     var commandDown: Bool = false
     
