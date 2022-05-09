@@ -17,9 +17,9 @@ public class Handler {
     public var StandaloneZones = Zones()
     public var Active: Bool = false
    
-    private let outerGaps: CGFloat = 4
-    private let innerGaps: CGFloat = 8
-    private let onTop: Bool = true
+    @AppStorage("outerGaps") var outerGaps: Double = 4
+    @AppStorage("innerGaps") var innerGaps: Double = 8
+    @AppStorage("onTop") var onTop: Bool = true
     
     init() {}
     

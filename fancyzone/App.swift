@@ -19,20 +19,8 @@ struct app: App {
     
     var body: some Scene {
         Settings {
-            EmptyView()
+            Preferences()
         }
-    }
-}
-
-
-
-struct PrimaryView: View {
-    
-    var body: some View {
-        ZStack {
-            EmptyView()
-        }.frame(maxWidth: .infinity, maxHeight: .infinity)
-        
     }
 }
 
@@ -43,10 +31,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     @Environment(\.openURL) var openURL
     @objc func showPreferences(_: Any?) {
-       if let url = URL(string: "fancyzones://preferences") {
-            openURL(url)
-       }
+        NSApp.activate(ignoringOtherApps: true)
+        NSApp.sendAction(Selector(("showPreferencesWindow:")), to: nil, from: nil)
     }
+    
+    func equals(_ x : Any, _ y : Any) -> Bool {
+        guard x is AnyHashable else { return false }
+        guard y is AnyHashable else { return false }
+        return (x as! AnyHashable) == (y as! AnyHashable)
+    }
+
     
     func applicationDidFinishLaunching(_ notification: Notification) {
         guard UIElement.isProcessTrusted(withPrompt: true) else {
@@ -58,13 +52,49 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         genZones()
         
+        var state: [String: Any] = UserDefaults.standard.dictionaryRepresentation()
+        
+        NotificationCenter.default.addObserver(
+            forName: UserDefaults.didChangeNotification,
+            object: nil,
+            queue: OperationQueue.main) {
+                notification -> Void in
+                let newState = UserDefaults.standard.dictionaryRepresentation()
+                
+                var doGenZone = false
+                
+                for (key, value) in state {
+                    if newState[key] == nil {
+                        
+                    } else if !self.equals(value, newState[key]!) {
+                        if [
+                            "outerGaps",
+                            "innerGaps",
+                            "onTop",
+                            "splitLast",
+                            "columns"
+                        ].contains(key) {
+                            doGenZone = true
+                        } else {
+                            print("\(key): \(value) -> \(newState[key]!)")
+                        }
+                    }
+                }
+                
+                if doGenZone {
+                    genZones()
+                }
+                
+                state = newState
+            }
+        
         NotificationCenter.default.addObserver(
             forName: NSApplication.didChangeScreenParametersNotification,
             object: NSApplication.shared,
             queue: OperationQueue.main) {
                 notification -> Void in
                 genZones()
-        }
+            }
         
         backgroundService()
         menuService()
@@ -147,16 +177,22 @@ func cancel() {
 }
 
 func genZones() {
-    handler.AutoGenerateZones()
-//    handler.GenerateZones(4) // 4 columns
-    if handler.StandaloneZones.zones.count > 1 {
+    @AppStorage("splitLast") var splitLast: Bool = true
+    @AppStorage("columns") var columns: Int = 0
+    
+    if columns > 0 {
+        handler.GenerateZones(columns)
+    } else {
+        handler.AutoGenerateZones()
+    }
+    
+    if handler.StandaloneZones.zones.count > 1 && splitLast {
         handler.SplitZone(-1)
     }
 }
 
 func backgroundService() {
     var hoverEvent: NSEvent?
-    var commandDown: Bool = false
     
     // timer that updates the current position (hover)
     _ = Timer.scheduledTimer(withTimeInterval: 1.0/20.0, repeats: true) { timer in
