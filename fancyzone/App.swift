@@ -193,6 +193,7 @@ func genZones() {
 
 func backgroundService() {
     var hoverEvent: NSEvent?
+    var coordCache: [Int: CGRect] = [:]
     
     // timer that updates the current position (hover)
     _ = Timer.scheduledTimer(withTimeInterval: 1.0/20.0, repeats: true) { timer in
@@ -204,11 +205,9 @@ func backgroundService() {
     
     NSEvent.addGlobalMonitorForEvents(matching: .leftMouseDown, handler: { event in
         let coords = windowNumberToPosition(windowNumber: event.windowNumber)
+        coordCache[event.windowNumber] = coords
         
-        if coords.minY > 0 && coords.contains(event.cgEvent!.location) && CGFloat(event.cgEvent!.location.y) < coords.minY + 38 {
-            leftDown = true
-        }
-        
+        leftDown = true
     })
     
     NSEvent.addGlobalMonitorForEvents(matching: .flagsChanged, handler: { event in
@@ -229,7 +228,8 @@ func backgroundService() {
     
     // check if the position has changed
     NSEvent.addGlobalMonitorForEvents(matching: .leftMouseDragged, handler: { event in
-        if handler.Active && hoverEvent == nil {
+        let coords = windowNumberToPosition(windowNumber: event.windowNumber)
+        if handler.Active && hoverEvent == nil && coords != coordCache[event.windowNumber] {
             hoverEvent = event
         }
     })
