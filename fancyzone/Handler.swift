@@ -140,7 +140,6 @@ public class Handler {
             }
         }
         
-       
         
         // reset hovered state
         for i in 0...self.StandaloneZones.zones.count - 1 {
@@ -153,19 +152,16 @@ public class Handler {
         checkForHit(point: cursorPosition)
         
         if self.selectedZones.count == 0 {
-            checkForHit(point: CGPoint(x: cursorPosition.x - innerGaps, y: cursorPosition.y - innerGaps))
-            checkForHit(point: CGPoint(x: cursorPosition.x, y: cursorPosition.y - innerGaps))
-            checkForHit(point: CGPoint(x: cursorPosition.x + innerGaps, y: cursorPosition.y - innerGaps))
-            
-            checkForHit(point: CGPoint(x: cursorPosition.x - innerGaps, y: cursorPosition.y))
-//            checkForHit(point: CGPoint(x: cursorPosition.x, y: cursorPosition.y))
-            checkForHit(point: CGPoint(x: cursorPosition.x + innerGaps, y: cursorPosition.y))
-            
-            checkForHit(point: CGPoint(x: cursorPosition.x - innerGaps, y: cursorPosition.y + innerGaps))
-            checkForHit(point: CGPoint(x: cursorPosition.x, y: cursorPosition.y + innerGaps))
-            checkForHit(point: CGPoint(x: cursorPosition.x + innerGaps, y: cursorPosition.y + innerGaps))
+            for x in [-innerGaps, 0, innerGaps] {
+                for y in [-innerGaps, 0, innerGaps] {
+                    if x == 0 && y == 0 {
+                        continue
+                    }
+                    
+                    checkForHit(point: CGPoint(x: cursorPosition.x - x, y: cursorPosition.y - y))
+                }
+            }
         }
-
     }
     
     public func Submit() {
