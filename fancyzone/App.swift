@@ -247,8 +247,10 @@ func backgroundService() {
                 cancel()
                 return
             }
-
-            activate(event)
+            
+            if coordsChanged {
+                activate(event)
+            }
         }
     })
     
