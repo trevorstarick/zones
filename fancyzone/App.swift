@@ -11,6 +11,7 @@ import AXSwift
 public var handler = Handler()
 
 var leftDown = false
+var coordsChanged = false
 var toggled = false
 
 @main
@@ -217,7 +218,7 @@ func backgroundService() {
                 if toggled {
                     cancel()
                     return
-                } else if leftDown {
+                } else if leftDown && coordsChanged {
                     activate(event)
                 }
             } else {
@@ -229,7 +230,12 @@ func backgroundService() {
     // check if the position has changed
     NSEvent.addGlobalMonitorForEvents(matching: .leftMouseDragged, handler: { event in
         let coords = windowNumberToPosition(windowNumber: event.windowNumber)
-        if handler.Active && hoverEvent == nil && coords != coordCache[event.windowNumber] {
+        
+        if coords != coordCache[event.windowNumber] {
+            coordsChanged = true
+        }
+        
+        if handler.Active && hoverEvent == nil {
             hoverEvent = event
         }
     })
@@ -250,6 +256,7 @@ func backgroundService() {
     NSEvent.addGlobalMonitorForEvents(matching: .leftMouseUp, handler: { event in
         if leftDown {
             leftDown = false
+            coordsChanged = false
             toggled = false
             hoverEvent = nil
             
