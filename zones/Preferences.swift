@@ -1,6 +1,6 @@
 //
 //  Preferences.swift
-//  fancyzone
+// zones
 //
 //  Created by Trevor Starick on 2021-11-24.
 //

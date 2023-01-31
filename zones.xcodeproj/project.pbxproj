@@ -20,11 +20,11 @@
 
 /* Begin PBXFileReference section */
 		D6B5406928241198003F03F5 /* ActiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveView.swift; sourceTree = "<group>"; };
-		D6D5341B274A99F2000C0FC4 /* fancyzone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = fancyzone.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D6D5341B274A99F2000C0FC4 /* zones.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = zones.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6D5341E274A99F2000C0FC4 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		D6D53422274A99F2000C0FC4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D6D53425274A99F2000C0FC4 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		D6D53427274A99F2000C0FC4 /* fancyzone.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = fancyzone.entitlements; sourceTree = "<group>"; };
+		D6D53427274A99F2000C0FC4 /* zones.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = zones.entitlements; sourceTree = "<group>"; };
 		D6D5344D274C7AA6000C0FC4 /* Zone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Zone.swift; sourceTree = "<group>"; };
 		D6D5344F274C9316000C0FC4 /* Handler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Handler.swift; sourceTree = "<group>"; };
 		D6D53468274D47FA000C0FC4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -47,7 +47,7 @@
 		D6D53412274A99F2000C0FC4 = {
 			isa = PBXGroup;
 			children = (
-				D6D5341D274A99F2000C0FC4 /* fancyzone */,
+				D6D5341D274A99F2000C0FC4 /* zones */,
 				D6D5341C274A99F2000C0FC4 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -55,25 +55,25 @@
 		D6D5341C274A99F2000C0FC4 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D6D5341B274A99F2000C0FC4 /* fancyzone.app */,
+				D6D5341B274A99F2000C0FC4 /* zones.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		D6D5341D274A99F2000C0FC4 /* fancyzone */ = {
+		D6D5341D274A99F2000C0FC4 /* zones */ = {
 			isa = PBXGroup;
 			children = (
 				D6D53468274D47FA000C0FC4 /* Info.plist */,
 				D6D5341E274A99F2000C0FC4 /* App.swift */,
 				D6D53422274A99F2000C0FC4 /* Assets.xcassets */,
-				D6D53427274A99F2000C0FC4 /* fancyzone.entitlements */,
+				D6D53427274A99F2000C0FC4 /* zones.entitlements */,
 				D6D53424274A99F2000C0FC4 /* Preview Content */,
 				D6D5344D274C7AA6000C0FC4 /* Zone.swift */,
 				D6D5344F274C9316000C0FC4 /* Handler.swift */,
 				D6F436ED274F08B600CDADB5 /* Preferences.swift */,
 				D6B5406928241198003F03F5 /* ActiveView.swift */,
 			);
-			path = fancyzone;
+			path = zones;
 			sourceTree = "<group>";
 		};
 		D6D53424274A99F2000C0FC4 /* Preview Content */ = {
@@ -87,9 +87,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		D6D5341A274A99F2000C0FC4 /* fancyzone */ = {
+		D6D5341A274A99F2000C0FC4 /* zones */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D6D5342A274A99F2000C0FC4 /* Build configuration list for PBXNativeTarget "fancyzone" */;
+			buildConfigurationList = D6D5342A274A99F2000C0FC4 /* Build configuration list for PBXNativeTarget "zones" */;
 			buildPhases = (
 				D6D53417274A99F2000C0FC4 /* Sources */,
 				D6D53418274A99F2000C0FC4 /* Frameworks */,
@@ -99,13 +99,13 @@
 			);
 			dependencies = (
 			);
-			name = fancyzone;
+			name = zones;
 			packageProductDependencies = (
 				D6EDF144276E66A200B7B69C /* AXSwift */,
 				D6B5406728240BC7003F03F5 /* AXSwift */,
 			);
-			productName = fancyzone;
-			productReference = D6D5341B274A99F2000C0FC4 /* fancyzone.app */;
+			productName = zones;
+			productReference = D6D5341B274A99F2000C0FC4 /* zones.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -116,14 +116,14 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1310;
-				LastUpgradeCheck = 1330;
+				LastUpgradeCheck = 1420;
 				TargetAttributes = {
 					D6D5341A274A99F2000C0FC4 = {
 						CreatedOnToolsVersion = 13.1;
 					};
 				};
 			};
-			buildConfigurationList = D6D53416274A99F2000C0FC4 /* Build configuration list for PBXProject "fancyzone" */;
+			buildConfigurationList = D6D53416274A99F2000C0FC4 /* Build configuration list for PBXProject "zones" */;
 			compatibilityVersion = "Xcode 13.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -140,7 +140,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				D6D5341A274A99F2000C0FC4 /* fancyzone */,
+				D6D5341A274A99F2000C0FC4 /* zones */,
 			);
 		};
 /* End PBXProject section */
@@ -207,6 +207,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -224,7 +225,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -268,6 +269,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -279,7 +281,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
@@ -293,17 +295,18 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = fancyzone/fancyzone.entitlements;
+				CODE_SIGN_ENTITLEMENTS = zones/zones.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"fancyzone/Preview Content\"";
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_ASSET_PATHS = "\"zones/Preview Content\"";
 				DEVELOPMENT_TEAM = 78QVX4PFXV;
-				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = NO;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = fancyzone/Info.plist;
+				INFOPLIST_FILE = zones/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -311,7 +314,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.trevorstarick.fancyzone;
+				PRODUCT_BUNDLE_IDENTIFIER = com.trevorstarick.zones;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -323,17 +326,18 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = fancyzone/fancyzone.entitlements;
+				CODE_SIGN_ENTITLEMENTS = zones/zones.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"fancyzone/Preview Content\"";
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_ASSET_PATHS = "\"zones/Preview Content\"";
 				DEVELOPMENT_TEAM = 78QVX4PFXV;
-				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = NO;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = fancyzone/Info.plist;
+				INFOPLIST_FILE = zones/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -341,7 +345,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.trevorstarick.fancyzone;
+				PRODUCT_BUNDLE_IDENTIFIER = com.trevorstarick.zones;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -351,7 +355,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		D6D53416274A99F2000C0FC4 /* Build configuration list for PBXProject "fancyzone" */ = {
+		D6D53416274A99F2000C0FC4 /* Build configuration list for PBXProject "zones" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D6D53428274A99F2000C0FC4 /* Debug */,
@@ -360,7 +364,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D6D5342A274A99F2000C0FC4 /* Build configuration list for PBXNativeTarget "fancyzone" */ = {
+		D6D5342A274A99F2000C0FC4 /* Build configuration list for PBXNativeTarget "zones" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D6D5342B274A99F2000C0FC4 /* Debug */,

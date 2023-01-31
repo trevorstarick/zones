@@ -1,6 +1,6 @@
 //
 //  ActiveView.swift
-//  fancyzone
+// zones
 //
 //  Created by Trevor Starick on 2022-05-05.
 //

@@ -1,6 +1,6 @@
 //
-//  fancyzoneApp.swift
-//  fancyzone
+// zonesApp.swift
+// zones
 //
 //  Created by Trevor Starick on 2021-11-21.
 //
@@ -111,8 +111,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let preferences = NSMenuItem(title: "Preferences", action: #selector(showPreferences), keyEquivalent: ",")
         menu.addItem(preferences)
         
-        let aboutCleverZones = NSMenuItem(title: "About CleverZones", action: #selector(NSApplication.shared.showHelp), keyEquivalent: "")
-        menu.addItem(aboutCleverZones)
+        let aboutZones = NSMenuItem(title: "About Zones", action: #selector(NSApplication.shared.showHelp), keyEquivalent: "")
+        menu.addItem(aboutZones)
         
         menu.addItem(.separator())
         
@@ -121,7 +121,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         if showMenuButton {
             statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-            statusBarItem?.button?.title = "💩"
+            statusBarItem?.button?.image = NSImage(named: "BarIcon")
             statusBarItem?.menu = menu
         }
     }

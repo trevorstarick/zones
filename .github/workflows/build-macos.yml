@@ -1,0 +1,26 @@
+name: CI
+
+on: [push]
+
+
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+    - name: Checkout Project
+      uses: actions/checkout@v1
+
+    - name: Homebrew build helpers install
+      run: brew bundle
+
+    - name: Xcodebuild Action
+      uses: mxcl/xcodebuild@v1
+      with:
+        platform: macOS
+        action: build
+    - name: 'Upload Artifact'
+      uses: actions/upload-artifact@v3
+      with:
+        name: zones.app
+        path: 
