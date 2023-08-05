@@ -23,11 +23,22 @@ public class Handler {
     
     init() {}
     
-    private func createWindow() {
-        let size = (NSScreen.main?.frame.size)!
+    private func getUsableSpace() -> NSRect {
+        let frame = (NSScreen.main?.frame)
+        let vis = (NSScreen.main?.visibleFrame)
+//        let barHeight = (frame?.size.height ?? 0) - (vis?.size.height ?? 0) + (vis?.origin.y ?? 0)
         
+        // todo: isMenuBar hidden; return frame, else return vis
+        
+        let size = vis?.size ?? frame!.size
+        let origin = vis?.origin ?? frame!.origin
+    
+        return NSRect(origin: origin, size: size)
+    }
+    
+    private func createWindow() {
         self.window = NSWindow(
-            contentRect: NSRect(origin: CGPoint(x: 0, y: 0), size: size),
+            contentRect: getUsableSpace(),
                 styleMask: [],
             backing: .buffered, defer: false)
         
@@ -74,15 +85,14 @@ public class Handler {
     public func GenerateZones(_ targetColumns: Int) {
         self.StandaloneZones = Zones()
         
-        let screen = NSScreen.main!.frame
-        let menuBarHeight = (NSApplication.shared.mainMenu?.menuBarHeight)!
+        let usableSpace = getUsableSpace()
+        let screen = usableSpace.size
         
         var width = screen.width
         width -= outerGaps * 2
         width += innerGaps
         
         var height = screen.height
-        height -= menuBarHeight
         height -= outerGaps * 2
         height += innerGaps
         
@@ -100,7 +110,7 @@ public class Handler {
         
         var pos = CGPoint(
             x: outerGaps,
-            y: menuBarHeight + outerGaps
+            y: outerGaps
         )
         
         for _ in 0...targetColumns - 1 {
