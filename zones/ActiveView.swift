@@ -11,7 +11,6 @@ import SwiftUI
 struct SwiftUIView: View {
     @ObservedObject var zones: Zones
 
-    let bounds = NSScreen.main?.frame
     var body: some View {
         ZStack{
             ForEach($zones.zones, id: \.self) { $zone in

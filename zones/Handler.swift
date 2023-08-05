@@ -26,7 +26,6 @@ public class Handler {
     private func getUsableSpace() -> NSRect {
         let frame = (NSScreen.main?.frame)
         let vis = (NSScreen.main?.visibleFrame)
-//        let barHeight = (frame?.size.height ?? 0) - (vis?.size.height ?? 0) + (vis?.origin.y ?? 0)
         
         // todo: isMenuBar hidden; return frame, else return vis
         
@@ -34,6 +33,14 @@ public class Handler {
         let origin = vis?.origin ?? frame!.origin
     
         return NSRect(origin: origin, size: size)
+    }
+    
+    private func getBarHeight() -> CGFloat {
+        let frame = (NSScreen.main?.frame)
+        let vis = (NSScreen.main?.visibleFrame)
+        let barHeight = (frame?.size.height ?? 0) - (vis?.size.height ?? 0) + (vis?.origin.y ?? 0)
+        
+        return barHeight
     }
     
     private func createWindow() {
@@ -121,8 +128,8 @@ public class Handler {
     }
     
     public func AutoGenerateZones() {
-        let screen = NSScreen.main!.frame
-        let columns = Int(ceil(screen.width / 1280))
+        let space = getUsableSpace()
+        let columns = Int(ceil(space.size.width / 1280))
     
         self.GenerateZones(columns)
     }
@@ -193,6 +200,8 @@ public class Handler {
             let zone = self.selectedZones[i]
             r = r.union(CGRect(origin: zone.Position, size: zone.Size))
         }
+        
+        r.origin.y += getBarHeight()
         
         try! w.setAttribute(.position, value: r.origin)
         try? w.setAttribute(.size, value: r.size)

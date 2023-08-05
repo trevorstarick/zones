@@ -164,7 +164,7 @@ func activate(_ event: NSEvent) {
     toggled = true
     let coord = CGPoint(
         x: event.locationInWindow.x,
-        y: NSScreen.main!.frame.height - event.locationInWindow.y
+        y: NSScreen.main!.visibleFrame.height - event.locationInWindow.y
     )
     handler.Handle(coord)
 }
