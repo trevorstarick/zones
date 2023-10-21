@@ -209,7 +209,7 @@ func genZones(screen: NSScreen) {
     
     handler.StandaloneZones[screen.displayID!] = Zones()
     
-    print(splitLast, columns)
+    print("\(screen.localizedName):", "splitLast=\(splitLast)", "columns=\(columns)")
     
     if columns > 0 {
         handler.GenerateZones(screen: screen, targetColumns: columns)
