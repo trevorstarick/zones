@@ -25,17 +25,30 @@ public struct Zone: Identifiable, Hashable {
     
     public var Size: CGSize
     public var Position: CGPoint
+    private var origin: CGPoint
     
     public var Hovered: Bool
     
     init(_ rect: CGRect) {
-        self.init(rect.size, rect.origin)
+        self.init(rect.size, rect.origin, CGPoint(x: 0, y: 0))
     }
     
-    init(_ size: CGSize, _ position: CGPoint) {
+    init(_ size: CGSize, _ position: CGPoint, _ origin: CGPoint) {
         Size = size
         Position = position
         Hovered = false
+        self.origin = origin
+    }
+    
+    public func Origin() -> CGPoint {
+        return CGPoint(
+            x: self.Position.x + self.origin.x,
+            y: self.Position.y + self.origin.y
+        )
+    }
+    
+    public func Dupe() -> Zone {
+        return Zone(self.Size, self.Position, self.origin)
     }
     
     public func Within(_ position: CGPoint) -> Bool {

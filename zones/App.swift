@@ -14,6 +14,13 @@ var leftDown = false
 var coordsChanged = false
 var toggled = false
 
+extension NSScreen {
+    var displayID: CGDirectDisplayID? {
+        return deviceDescription[NSDeviceDescriptionKey(rawValue: "NSScreenNumber")] as? CGDirectDisplayID
+    }
+}
+
+
 @main
 struct app: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
@@ -51,7 +58,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
 
-        genZones()
+        for screen in NSScreen.screens {
+            genZones(screen: screen)
+        }
         
         var state: [String: Any] = UserDefaults.standard.dictionaryRepresentation()
         
@@ -83,7 +92,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 }
                 
                 if doGenZone {
-                    genZones()
+                    for screen in NSScreen.screens {
+                        genZones(screen: screen)
+                    }
                 }
                 
                 state = newState
@@ -94,7 +105,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             object: NSApplication.shared,
             queue: OperationQueue.main) {
                 notification -> Void in
-                genZones()
+                for screen in NSScreen.screens {
+                    genZones(screen: screen)
+                }
             }
         
         backgroundService()
@@ -160,12 +173,25 @@ func windowNumberToPosition(windowNumber: Int) -> CGRect {
     return CGRect()
 }
 
+func getScreenWithMouse() -> NSScreen! {
+    let mouseLocation = NSEvent.mouseLocation
+    let screens = NSScreen.screens
+    let screenWithMouse = (screens.first { NSMouseInRect(mouseLocation, $0.frame, false) })
+
+    return screenWithMouse
+}
+
 func activate(_ event: NSEvent) {
     toggled = true
+    
+    let screen = getScreenWithMouse()!
+    let height = screen.visibleFrame.height
+    
     let coord = CGPoint(
         x: event.locationInWindow.x,
-        y: NSScreen.main!.visibleFrame.height - event.locationInWindow.y
+        y: height - event.locationInWindow.y
     )
+    
     handler.Handle(coord)
 }
 
@@ -177,18 +203,22 @@ func cancel() {
     }
 }
 
-func genZones() {
+func genZones(screen: NSScreen) {
     @AppStorage("splitLast") var splitLast: Bool = true
     @AppStorage("columns") var columns: Int = 0
     
+    handler.StandaloneZones[screen.displayID!] = Zones()
+    
+    print(splitLast, columns)
+    
     if columns > 0 {
-        handler.GenerateZones(columns)
+        handler.GenerateZones(screen: screen, targetColumns: columns)
     } else {
-        handler.AutoGenerateZones()
+        handler.AutoGenerateZones(screen: screen)
     }
     
-    if handler.StandaloneZones.zones.count > 1 && splitLast {
-        handler.SplitZone(-1)
+    if handler.StandaloneZones[screen.displayID!]!.zones.count > 1 && splitLast {
+        handler.SplitZone(screen, -1)
     }
 }
 
