@@ -184,15 +184,13 @@ func getScreenWithMouse() -> NSScreen! {
 func activate(_ event: NSEvent) {
     toggled = true
     
-    let screen = getScreenWithMouse()!
-    let height = screen.visibleFrame.height
     
-    let coord = CGPoint(
-        x: event.locationInWindow.x,
-        y: height - event.locationInWindow.y
+    let pos = CGPoint(
+        x: NSEvent.mouseLocation.x,
+        y: NSScreen.screens.first!.frame.height - NSEvent.mouseLocation.y
     )
     
-    handler.Handle(coord)
+    handler.Handle(pos)
 }
 
 func cancel() {
@@ -209,7 +207,7 @@ func genZones(screen: NSScreen) {
     
     handler.StandaloneZones[screen.displayID!] = Zones()
     
-    print("\(screen.localizedName):", "splitLast=\(splitLast)", "columns=\(columns)")
+    print("\(screen.localizedName):", "splitLast=\(splitLast)", "columns=\(columns)", "\(screen.frame) vs \(screen.visibleFrame)")
     
     if columns > 0 {
         handler.GenerateZones(screen: screen, targetColumns: columns)
@@ -219,6 +217,10 @@ func genZones(screen: NSScreen) {
     
     if handler.StandaloneZones[screen.displayID!]!.zones.count > 1 && splitLast {
         handler.SplitZone(screen, -1)
+    }
+    
+    for zone in handler.StandaloneZones[screen.displayID!]!.zones {
+        print(zone)
     }
 }
 

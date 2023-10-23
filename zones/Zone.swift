@@ -24,39 +24,28 @@ public struct Zone: Identifiable, Hashable {
     public var id = UUID()
     
     public var Size: CGSize
-    public var Position: CGPoint
-    private var origin: CGPoint
+    public var GlobalOrigin: CGPoint
+    public var ScreenOrigin: CGPoint
     
     public var Hovered: Bool
     
-    init(_ rect: CGRect) {
-        self.init(rect.size, rect.origin, CGPoint(x: 0, y: 0))
-    }
-    
-    init(_ size: CGSize, _ position: CGPoint, _ origin: CGPoint) {
+    init(_ size: CGSize, _ global: CGPoint, _ screen: CGPoint) {
         Size = size
-        Position = position
+        GlobalOrigin = global
+        ScreenOrigin = screen
         Hovered = false
-        self.origin = origin
-    }
-    
-    public func Origin() -> CGPoint {
-        return CGPoint(
-            x: self.Position.x + self.origin.x,
-            y: self.Position.y + self.origin.y
-        )
     }
     
     public func Dupe() -> Zone {
-        return Zone(self.Size, self.Position, self.origin)
+        return Zone(self.Size, self.GlobalOrigin, self.ScreenOrigin)
     }
     
     public func Within(_ position: CGPoint) -> Bool {
-        return (
-            self.Position.x <= position.x
-            && position.x <= self.Position.x + self.Size.width
-            && self.Position.y <= position.y
-            && position.y <= self.Position.y + self.Size.height
+        let r = CGRect(
+            origin: self.GlobalOrigin,
+            size: self.Size
         )
+        
+        return CGRectContainsPoint(r, position)
     }
 }

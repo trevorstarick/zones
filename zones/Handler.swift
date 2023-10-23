@@ -25,17 +25,9 @@ public class Handler {
     
     init() {}
     
-    private func getUsableSpace(screen: NSScreen) -> NSRect {
-        return NSRect(origin: screen.visibleFrame.origin, size: screen.visibleFrame.size)
-    }
-    
-    private func getBarHeight(screen: NSScreen) -> CGFloat {
-        return screen.frame.size.height - screen.visibleFrame.size.height + screen.visibleFrame.origin.y
-    }
-    
     private func createWindow(screen: NSScreen) {
         self.window = NSWindow(
-            contentRect: getUsableSpace(screen: screen),
+            contentRect: screen.visibleFrame,
                 styleMask: [],
             backing: .buffered, defer: false)
         
@@ -53,7 +45,7 @@ public class Handler {
         lastDisplayID = screen.displayID!
     }
     
-    func checkForHit(point: CGPoint) {
+    func checkForHit(point: CGPoint) -> Bool {
         let screen = getScreenWithMouse()!
         let displayID = screen.displayID!
         
@@ -63,9 +55,11 @@ public class Handler {
             if zone.Within(point) {
                 self.selectedZones.append(zone)
                 self.StandaloneZones[displayID]!.zones[i].Hovered = true
-                return
+                return true
             }
         }
+        
+        return false
     }
     
     public func SplitZone(_ screen: NSScreen, _ index: Int, splitType: String = "verticle") {
@@ -86,26 +80,26 @@ public class Handler {
             zones!.zones[zoneIndex].Size.height /= 2
             
             var dupe = zones!.zones[zoneIndex].Dupe()
-            dupe.Position.y += dupe.Size.height + innerGaps
-            zones!.zones.insert(dupe, at: zoneIndex)
+            dupe.GlobalOrigin.y += dupe.Size.height + innerGaps
+            dupe.ScreenOrigin.y += dupe.Size.height + innerGaps
+            self.StandaloneZones[screen.displayID!]!.zones.append(dupe)
+            
+            
         } else if splitType == "horizontal" {
             
         }
     }
 
     public func GenerateZones(screen: NSScreen, targetColumns: Int) {
-        let usableSpace = getUsableSpace(screen: screen)
-        let screenSize = usableSpace.size
-        
         if self.StandaloneZones[screen.displayID!] == nil {
             self.StandaloneZones[screen.displayID!] = Zones()
         }
         
-        var width = screenSize.width
+        var width = screen.visibleFrame.size.width
         width -= outerGaps * 2
         width += innerGaps
         
-        var height = screenSize.height
+        var height = screen.visibleFrame.size.height
         height -= outerGaps * 2
         height += innerGaps
         
@@ -126,16 +120,24 @@ public class Handler {
             y: outerGaps
         )
         
+        let deltaWidth = NSScreen.screens.first!.frame.width - screen.frame.width
+        let deltaHeight = NSScreen.screens.first!.frame.height - screen.frame.height
+        let barHeight = screen.frame.height - screen.visibleFrame.height
+    
+        
         for _ in 0...targetColumns - 1 {
-            let z = Zone(smartSize, pos, screen.visibleFrame.origin)
+            let x = pos.x + screen.frame.origin.x
+            let y = pos.y - screen.frame.origin.y + deltaHeight + barHeight
+            
+            let glob = CGPoint(x: x, y: y)
+            let z = Zone(smartSize, glob, pos)
             self.StandaloneZones[screen.displayID!]!.zones.append(z)
             pos.x += smartSize.width + innerGaps
         }
     }
     
     public func AutoGenerateZones(screen: NSScreen) {
-        let space = getUsableSpace(screen: screen)
-        let columns = Int(ceil(space.size.width / 1280))
+        let columns = Int(ceil(screen.visibleFrame.size.width / 1280))
     
         self.GenerateZones(screen: screen, targetColumns: columns)
     }
@@ -146,7 +148,7 @@ public class Handler {
         if self.Active == false {
             self.Active = true
             self.createWindow(screen: screen)
-            self.window.makeKeyAndOrderFront(nil)
+            self.window.orderFront(nil)
             if onTop {
                 self.window.orderFrontRegardless()
             }
@@ -166,7 +168,7 @@ public class Handler {
         } else if lastDisplayID != screen.displayID! {
             self.window.close()
             self.createWindow(screen: screen)
-            self.window.makeKeyAndOrderFront(nil)
+            self.window.orderFront(nil)
             if onTop {
                 self.window.orderFrontRegardless()
             }
@@ -179,20 +181,13 @@ public class Handler {
         
         self.selectedZones = [Zone]()
         
-        let point = CGPoint(x: cursorPosition.x - screen.visibleFrame.origin.x,
-                            y: cursorPosition.y - screen.visibleFrame.origin.y)
-        
-        // suggest a zone
-        checkForHit(point: point)
-        
         if self.selectedZones.count == 0 {
             for x in [-innerGaps, 0, innerGaps] {
                 for y in [-innerGaps, 0, innerGaps] {
-                    if x == 0 && y == 0 {
-                        continue
-                    }
-                    
-                    checkForHit(point: CGPoint(x: point.x - x, y: point.y - y))
+                    _ = checkForHit(point: CGPoint(
+                        x: cursorPosition.x + x,
+                        y: cursorPosition.y + y
+                    ))
                 }
             }
         }
@@ -205,25 +200,33 @@ public class Handler {
             return
         }
         
-        if self.selectedZones.count == 1 {
-            try! w.setAttribute(.position, value: self.selectedZones[0].Origin())
-            try? w.setAttribute(.size, value: self.selectedZones[0].Size)
+        let loc = CGPoint(
+            x: self.selectedZones.first!.ScreenOrigin.x + getScreenWithMouse().frame.origin.x,
+            y: self.selectedZones.first!.ScreenOrigin.y + getScreenWithMouse().frame.origin.y
+        )
+        
+        var r = CGRect(
+            origin: self.selectedZones.first!.GlobalOrigin,
+//            origin: loc,
+            size: self.selectedZones.first!.Size
+        )
+        
+        if self.selectedZones.count > 1 {
+            for i in 1...self.selectedZones.count - 1 {
+                r = r.union(CGRect(
+                    origin: self.selectedZones[i].GlobalOrigin,
+                    size: self.selectedZones[i].Size
+                ))
+            }
         }
         
-        var r = CGRect(origin: self.selectedZones[0].Origin(), size: self.selectedZones[0].Size)
-        
-        for i in 0...self.selectedZones.count - 1 {
-            r = r.union(CGRect(origin: self.selectedZones[i].Origin(), size: self.selectedZones[i].Size))
-        }
-        
-        r.origin.y += getBarHeight(screen: getScreenWithMouse())
+        print("submit:", r.origin, r.size)
         
         try! w.setAttribute(.position, value: r.origin)
         try? w.setAttribute(.size, value: r.size)
     }
     
     public func Cancel() {
-//        self.window.orderOut(self)
         self.window.close()
         
         self.Active = false
