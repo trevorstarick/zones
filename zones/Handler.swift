@@ -256,8 +256,8 @@ public class Handler {
         )
        
         let percentage = 1.0/8.0
-        var padding = 64.0
-
+        let padding = min(r.width, r.height) * percentage
+        
         position.x = normalizePosition(
             origin: r.origin.x,
             padding: padding,
