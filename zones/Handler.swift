@@ -215,8 +215,47 @@ public class Handler {
         
         print("submit:", r.origin, r.size)
         
-        try! w.setAttribute(.position, value: r.origin)
+        try? w.setAttribute(.position, value: r.origin)
         try? w.setAttribute(.size, value: r.size)
+        
+        let attr = try! w.getMultipleAttributes(.size, .position)
+        let size = attr[.size] as! CGSize
+        var position = attr[.position] as! CGPoint
+        
+        let width = abs(r.size.width - size.width)
+        let height = abs(r.size.height - size.height)
+        
+        let mousePosition = CGPoint(
+            x: NSEvent.mouseLocation.x,
+            y: (getScreenWithMouse()?.frame.height)! - NSEvent.mouseLocation.y
+        )
+       
+        var padding = 64.0
+    
+        if (r.width * 0.3 < r.height * 0.3) {
+            padding = r.width * 0.3
+        } else {
+            padding = r.height * 0.3
+        }
+        
+        if (r.origin.x + padding > mousePosition.x) {
+            position.x = r.origin.x
+        } else if (r.origin.x + r.width - padding < mousePosition.x) {
+            position.x = r.origin.x + r.width - size.width
+        } else {
+            position.x += floor(width / 2)
+        }
+        
+        if (r.origin.y + padding > mousePosition.y) {
+            position.y = r.origin.y
+        } else if (r.origin.y + r.height - padding < mousePosition.y) {
+            position.y = r.origin.y + r.height - size.height
+        } else {
+            position.y += floor(height / 2)
+        }
+        
+        // todo: use NSEvent.mouseLocation to move the position to the closest edge(s)
+        try? w.setAttribute(.position, value: position)
     }
     
     public func Cancel() {
