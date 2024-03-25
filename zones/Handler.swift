@@ -192,6 +192,36 @@ public class Handler {
         }
     }
     
+    func normalizePosition(
+        origin: CGFloat, padding: CGFloat, weight: CGFloat, 
+        max: CGFloat, actual: CGFloat, target: CGFloat
+    ) -> CGFloat {
+        // if the weight is on the left side
+        if (origin + padding > weight) {
+            return origin
+        } 
+        
+        // if the weight is on the right side
+        if (origin + target - padding < weight) {
+            return origin + target - actual
+        }
+        
+        // if the actual size is less than the target size
+        if (actual < target) {
+            return origin + floor(abs(target - actual) / 2)
+        }
+        
+        // if the actual size is greater than the target size, 
+        //  and the actual size is less than the max size, 
+        //  and the actual size will not exceed the max size given the origin
+        if (actual < max && origin + actual > max) {
+            return origin + target - actual
+        }
+
+        // otherwise, return the origin as is
+        return origin
+    }
+    
     public func Submit() {
         guard let w = self.currentWindow else { return }
         
@@ -213,8 +243,6 @@ public class Handler {
             }
         }
         
-        print("submit:", r.origin, r.size)
-        
         try? w.setAttribute(.position, value: r.origin)
         try? w.setAttribute(.size, value: r.size)
         
@@ -222,37 +250,31 @@ public class Handler {
         let size = attr[.size] as! CGSize
         var position = attr[.position] as! CGPoint
         
-        let width = abs(r.size.width - size.width)
-        let height = abs(r.size.height - size.height)
-        
         let mousePosition = CGPoint(
             x: NSEvent.mouseLocation.x,
             y: (getScreenWithMouse()?.frame.height)! - NSEvent.mouseLocation.y
         )
        
+        let percentage = 1.0/8.0
         var padding = 64.0
-    
-        if (r.width * 0.3 < r.height * 0.3) {
-            padding = r.width * 0.3
-        } else {
-            padding = r.height * 0.3
-        }
-        
-        if (r.origin.x + padding > mousePosition.x) {
-            position.x = r.origin.x
-        } else if (r.origin.x + r.width - padding < mousePosition.x) {
-            position.x = r.origin.x + r.width - size.width
-        } else {
-            position.x += floor(width / 2)
-        }
-        
-        if (r.origin.y + padding > mousePosition.y) {
-            position.y = r.origin.y
-        } else if (r.origin.y + r.height - padding < mousePosition.y) {
-            position.y = r.origin.y + r.height - size.height
-        } else {
-            position.y += floor(height / 2)
-        }
+
+        position.x = normalizePosition(
+            origin: r.origin.x,
+            padding: padding,
+            weight: mousePosition.x,
+            max: (getScreenWithMouse()?.frame.width)!,
+            actual: size.width,
+            target: r.width
+        )
+
+        position.y = normalizePosition(
+            origin: r.origin.y,
+            padding: padding,
+            weight: mousePosition.y,
+            max: (getScreenWithMouse()?.frame.height)!,
+            actual: size.height,
+            target: r.height
+        )
         
         // todo: use NSEvent.mouseLocation to move the position to the closest edge(s)
         try? w.setAttribute(.position, value: position)
