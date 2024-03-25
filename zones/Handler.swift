@@ -120,7 +120,6 @@ public class Handler {
             y: outerGaps
         )
         
-        let deltaWidth = NSScreen.screens.first!.frame.width - screen.frame.width
         let deltaHeight = NSScreen.screens.first!.frame.height - screen.frame.height
         let barHeight = screen.frame.height - screen.visibleFrame.height
     
@@ -200,14 +199,8 @@ public class Handler {
             return
         }
         
-        let loc = CGPoint(
-            x: self.selectedZones.first!.ScreenOrigin.x + getScreenWithMouse().frame.origin.x,
-            y: self.selectedZones.first!.ScreenOrigin.y + getScreenWithMouse().frame.origin.y
-        )
-        
         var r = CGRect(
             origin: self.selectedZones.first!.GlobalOrigin,
-//            origin: loc,
             size: self.selectedZones.first!.Size
         )
         
